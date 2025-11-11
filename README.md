@@ -242,7 +242,7 @@ git add . && git commit -m "chore: bump version to 0.2.0"
 git tag v0.2.0 && git push && git push --tags
 ```
 
-See [VERSION.md](./VERSION.md) for details.
+See [VERSION.mdx](./VERSION.mdx) for details.
 
 ## 🤝 Contributing
 
