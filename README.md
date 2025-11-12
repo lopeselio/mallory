@@ -1,6 +1,33 @@
-# Mallory
+# Mallory Alpha Streams
 
-Opinionated React Native crypto x AI chat app boilerplate with embedded wallet support, conversational AI, and dynamic UI component injection.
+A mobile-first AI copilot that replaces bulk analytics subscriptions with penny-priced, real-time Solana x402 paywalls. Mallory Alpha Streams only spends USDC when you ask for premium on-chain intelligence, then instantly renders the results as interactive AlphaStream cards right inside the chat so teams stay in flow without long-term pre-paid subscriptions, licenses, or dashboard detours.
+
+## 🎯 Hackathon Pitch
+
+**Mallory Alpha Streams** turns on-chain intelligence into a "micropay-as-you-go" superpower. Instead of locking analysts into $100+/month data contracts, each Nansen insight is bought on demand for ~0.001–0.002 USDC via x402.
+
+### The Problem: Subscription Lock-In
+
+Traditional blockchain analytics platforms (Nansen, Dune, etc.) require:
+- **High upfront costs**: $100–$500+/month subscriptions even for occasional use
+- **Rigid contracts**: Annual commitments that don't scale with actual usage
+- **Dashboard fatigue**: Teams must context-switch between chat tools and analytics dashboards
+- **Access barriers**: Shared API keys, VPN requirements, desktop-only access
+- **Waste**: Paying for unused capacity "just in case" you need data
+
+Small DAOs, trading desks, and gaming guilds often can't justify full licenses, while enterprises struggle with cost allocation and access control.
+
+### The Solution: Micropayment-Powered Intelligence
+
+Mallory Alpha Streams solves this with:
+
+- **💰 Granular spend**: Pay only when an insight is actually needed (the latest Smart Money rotation, a wallet deep dive, or a token pulse), rather than keeping a subscription warm "just in case"
+- **⚡ Instant UX**: The app funnels Grid's production wallet through x402 right in the chat UI; balances update and the assistant keeps responding in seconds, with deductions visible in the new sticky HUD
+- **🤖 AI-native workflows**: Alpha Streams live inside the conversation: natural-language requests trigger tools, render dynamic AlphaStreamCards, and raise realtime toasts every time USDC/SOL leaves the Grid account (no manual reconciliation)
+- **📱 Mobile-first scouting**: Hand an analyst or trader an Expo build; the combination of Grid, x402 and AI removes the need for shared API keys or VPN'd desktops
+- **📊 Transparent ops**: The ledger lands in Supabase (`alpha_usage`) so finance can reconcile spend by user/tool; [Orb Explorer](https://orb.helius.dev) confirms the chain moves
+
+Compared with subscription SaaS dashboards, Mallory's "micropayment + chat" model makes institutional-grade data accessible to smaller teams that would never justify a full license, while still giving enterprises fine-grained cost controls.
 
 ## 🏗️ Monorepo Structure
 
@@ -37,6 +64,121 @@ mallory/
 - 🔄 **Synchronized Versioning**: Single command updates all packages
 - 🏷️ **Automatic Releases**: GitHub releases created on version tags
 - 📝 **Generated Changelogs**: Commit history automatically compiled
+
+### Alpha Streams (Premium Tools)
+- 🔍 **Wallet Deep Dive**: Historical balances + top counterparties analysis
+- 📊 **Smart Money Radar**: Cross-chain netflows + holdings intelligence
+- 💎 **Token Pulse**: DEX trades + DCA activity + transfer patterns
+- 💰 **x402 Integration**: Automatic micropayments (~0.001–0.002 USDC per call)
+- 📈 **Real-time Balance Updates**: Live SOL/USDC balance badge with payment toasts
+- 📝 **Usage Analytics**: All spend tracked in `alpha_usage` table for reconciliation
+
+## 🏛️ System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         Client (Expo RN)                        │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
+│  │   Chat UI    │  │ Grid Wallet  │  │  AlphaStreamCard    │  │
+│  │              │  │  (x402 HUD)  │  │  AlphaToastProvider │  │
+│  └──────┬───────┘  └──────┬───────┘  └──────────────────────┘  │
+│         │                  │                                       │
+│         └──────────┬───────┘                                       │
+│                    │                                               │
+│         ┌───────────▼───────────┐                                  │
+│         │   Chat API Request    │                                  │
+│         │  (gridSession + msg)  │                                  │
+│         └───────────┬───────────┘                                  │
+└──────────────────────┼────────────────────────────────────────────┘
+                       │
+                       ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    Server (Node.js + Express)                    │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │              Claude AI (Anthropic)                      │   │
+│  │  ┌──────────────────────────────────────────────────┐   │   │
+│  │  │  Tool Registry:                                  │   │   │
+│  │  │  • searchWeb (free)                              │   │   │
+│  │  │  • alphaWalletDeepDive (x402)                    │   │   │
+│  │  │  • alphaSmartMoneyRadar (x402)                   │   │   │
+│  │  │  • alphaTokenPulse (x402)                        │   │   │
+│  │  └──────────────────────────────────────────────────┘   │   │
+│  └──────────────────────────────────────────────────────────┘   │
+│                       │                                           │
+│         ┌─────────────▼─────────────┐                            │
+│         │  x402 Payment Service     │                            │
+│         │  ┌─────────────────────┐ │                            │
+│         │  │ Ephemeral Wallet    │ │                            │
+│         │  │ Manager             │ │                            │
+│         │  └─────────────────────┘ │                            │
+│         └─────────────┬─────────────┘                            │
+└───────────────────────┼──────────────────────────────────────────┘
+                        │
+        ┌───────────────┼───────────────┐
+        │               │               │
+        ▼               ▼               ▼
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│   Grid API   │ │  x402 API    │ │  Nansen API  │
+│  (Funding)   │ │  (Payments)   │ │  (Data)      │
+└──────────────┘ └──────────────┘ └──────────────┘
+        │               │               │
+        └───────────────┼───────────────┘
+                        │
+                        ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      Supabase (PostgreSQL)                      │
+│  ┌──────────────────┐  ┌──────────────────┐                  │
+│  │  conversations   │  │   alpha_usage    │                  │
+│  │  messages        │  │  (ledger)        │                  │
+│  │  users           │  └──────────────────┘                  │
+│  └──────────────────┘                                         │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Flow: Alpha Stream Request
+
+1. **User Request**: "Show me wallet deep dive for 2NHG...kH7V"
+2. **AI Tool Selection**: Claude selects `alphaWalletDeepDive`
+3. **Payment Guard**: Server checks Grid wallet balance via Grid API
+4. **Ephemeral Wallet**: Creates temporary wallet for x402 payment
+5. **Funding**: Transfers 0.01 USDC + 0.001 SOL from Grid → ephemeral wallet
+6. **x402 Payment**: Ephemeral wallet pays ~0.001 USDC to Nansen via x402
+7. **Data Fetch**: Nansen returns historical balances + counterparties
+8. **Usage Logging**: Server writes row to `alpha_usage` table
+9. **Response**: AI formats data into `AlphaStreamCard` component
+10. **UI Update**: Client renders card + shows balance update toast
+
+## 🗺️ Future Roadmap
+
+### Phase 1: Enhanced Analytics (Q1 2025)
+- [ ] **Portfolio Analytics**: Multi-wallet aggregation and PnL tracking
+- [ ] **Alert System**: Real-time notifications for smart money movements
+- [ ] **Custom Dashboards**: Save and share Alpha Stream insights
+- [ ] **Export Tools**: CSV/JSON export for external analysis
+
+### Phase 2: Multi-Chain Expansion (Q2 2025)
+- [ ] **Ethereum Support**: Extend Alpha Streams to Ethereum mainnet
+- [ ] **Cross-Chain Analysis**: Compare flows across Solana, Ethereum, Base
+- [ ] **Layer 2 Integration**: Optimism, Arbitrum, Polygon support
+- [ ] **Bridge Intelligence**: Track cross-chain capital movements
+
+### Phase 3: Advanced Features (Q3 2025)
+- [ ] **AI-Powered Alerts**: Natural language alert creation ("notify me when whales buy SOL")
+- [ ] **Collaborative Workspaces**: Team sharing and permission management
+- [ ] **API Access**: REST/GraphQL APIs for programmatic access
+- [ ] **Webhook Integration**: Connect Alpha Streams to trading bots and dashboards
+
+### Phase 4: Enterprise Features (Q4 2025)
+- [ ] **Cost Controls**: Budget limits and spending alerts per team/user
+- [ ] **Audit Logs**: Comprehensive activity tracking for compliance
+- [ ] **SSO Integration**: Enterprise authentication (Okta, Auth0)
+- [ ] **Custom Data Sources**: Onboard proprietary analytics providers
+
+### Integration Opportunities
+- **DEX Aggregators**: Jupiter, 1inch for trade execution from insights
+- **Portfolio Trackers**: Zapper, DeBank for unified portfolio view
+- **Trading Bots**: Integrate Alpha Streams signals into automated strategies
+- **DAO Tools**: Snapshot, Tally for governance-informed decisions
 
 ## 🚀 Quick Start
 
@@ -139,6 +281,10 @@ See [apps/server/README.md](./apps/server/README.md) for detailed server documen
 - `searchWeb` - Web search via Exa (always available)
 - `addMemory` - User memory via Supermemory (optional)
 - `nansen*` - 20+ Nansen API endpoints for blockchain analytics (requires x402 payments)
+- `alphaWalletDeepDive` - Premium wallet analysis via Alpha Streams (~0.002 USDC)
+- `alphaSmartMoneyRadar` - Cross-chain smart money intelligence (~0.002 USDC)
+- `alphaTokenPulse` - Token activity and flow analysis (~0.001 USDC)
+- `nansen*` - 20+ individual Nansen API endpoints (requires x402 payments)
 
 ## 🔑 Grid Wallet Integration
 
@@ -149,9 +295,18 @@ Mallory uses [Grid](https://developers.squads.so) for embedded wallets:
 - **Session Secrets**: Generated client-side, passed to backend only when needed for signing
 - **Smart Contract Wallets**: Spending limits and programmable transactions
 - **Production Ready**: Sandbox and production environments
-- **x402 Integration**: Automatic micropayments for premium data APIs
+- **x402 Integration**: Automatic micropayments for premium data APIs via Alpha Streams
 
 Grid's architecture means neither the client nor server ever has access to user private keys, making it truly non-custodial while still providing seamless transaction signing.
+
+**Alpha Streams Payment Flow:**
+1. User requests premium insight in chat
+2. Server creates ephemeral wallet for x402 payment
+3. Grid wallet funds ephemeral wallet (0.01 USDC + 0.001 SOL)
+4. Ephemeral wallet pays Nansen via x402 (~0.001–0.002 USDC)
+5. Data returned and rendered in AlphaStreamCard
+6. Balance updates shown in real-time with toast notifications
+7. All transactions logged in `alpha_usage` table for reconciliation
 
 ## 📦 Shared Package
 
