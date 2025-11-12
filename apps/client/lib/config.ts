@@ -1,15 +1,31 @@
 import Constants from 'expo-constants';
+import { Platform } from 'react-native';
 
 /**
  * Runtime configuration values
  * Tries Constants.expoConfig.extra first (works on native), 
  * falls back to process.env (works on web with Metro)
  */
+const normalizeForAndroid = (value?: string) => {
+  if (Platform.OS !== 'android' || !value) return value;
+  if (value.includes('localhost') || value.includes('127.0.0.1')) {
+    return value
+      .replace(/localhost/g, '10.0.2.2')
+      .replace(/127\.0\.0\.1/g, '10.0.2.2');
+  }
+  return value;
+};
+
+const rawBackendUrl = (Constants.expoConfig?.extra?.backendApiUrl || process.env.EXPO_PUBLIC_BACKEND_API_URL) as string;
+const adjustedBackendUrl = normalizeForAndroid(rawBackendUrl);
+const rawSupabaseUrl = (Constants.expoConfig?.extra?.supabaseUrl || process.env.EXPO_PUBLIC_SUPABASE_URL) as string;
+const adjustedSupabaseUrl = normalizeForAndroid(rawSupabaseUrl);
+
 export const config = {
   webOAuthRedirectUrl: (Constants.expoConfig?.extra?.webOAuthRedirectUrl || process.env.EXPO_PUBLIC_WEB_OAUTH_REDIRECT_URL) as string,
-  backendApiUrl: (Constants.expoConfig?.extra?.backendApiUrl || process.env.EXPO_PUBLIC_BACKEND_API_URL) as string,
+  backendApiUrl: adjustedBackendUrl,
   solanaRpcUrl: (Constants.expoConfig?.extra?.solanaRpcUrl || process.env.EXPO_PUBLIC_SOLANA_RPC_URL) as string,
-  supabaseUrl: (Constants.expoConfig?.extra?.supabaseUrl || process.env.EXPO_PUBLIC_SUPABASE_URL) as string,
+  supabaseUrl: adjustedSupabaseUrl,
   supabaseAnonKey: (Constants.expoConfig?.extra?.supabaseAnonKey || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY) as string,
   gridApiKey: (Constants.expoConfig?.extra?.gridApiKey || process.env.EXPO_PUBLIC_GRID_API_KEY) as string,
   gridEnv: (Constants.expoConfig?.extra?.gridEnv || process.env.EXPO_PUBLIC_GRID_ENV || 'sandbox') as 'sandbox' | 'production',
