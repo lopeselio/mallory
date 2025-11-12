@@ -47,6 +47,50 @@ const AVAILABLE_COMPONENTS: ComponentSchema[] = [
     "quote": "AI has made significant progress in recent years"
   }]
 }}}`
+  },
+  {
+    name: 'AlphaStreamCard',
+    description: 'Premium analytics card for Mallory Alpha Streams. Use to present paywalled insights with structured sections, tables, bullets, and raw data.',
+    props: {
+      title: { type: 'string', required: true, description: 'Headline describing the alpha insight' },
+      subtitle: { type: 'string', required: false, description: 'Optional supporting subtitle' },
+      variant: { type: 'string', required: false, description: 'Styling variant: "wallet", "smartMoney", "token", or "general"' },
+      estimatedCost: { type: 'number', required: false, description: 'Approximate x402 spend in USDC (e.g., 0.002)' },
+      metadata: { type: 'object', required: false, description: 'Key/value chips for context (address, chain, timeframe, etc.)' },
+      sections: { type: 'array', required: true, description: 'Stacked insight sections with descriptions, bullets, and tables' },
+      disclaimer: { type: 'string', required: false, description: 'Footer disclaimer text (e.g., data sources, timeframes)' },
+    },
+    example: `{{component: "AlphaStreamCard", props: {
+  "title": "Wallet Deep Dive — 7d",
+  "subtitle": "0x1234 rotated into SOL ecosystem plays",
+  "variant": "wallet",
+  "estimatedCost": 0.002,
+  "metadata": {
+    "Address": "0x1234...ABCD",
+    "Chain": "Solana",
+    "Window": "7d"
+  },
+  "sections": [{
+    "title": "Balance Trends",
+    "bullets": [
+      "Total net worth up 18% week-over-week (+$42.3K)",
+      "USDC position trimmed by 22%, redeployed into SOL and mSOL"
+    ],
+    "table": [
+      { "label": "Top Position", "value": "SOL ($96.2K)", "change": "+14%" },
+      { "label": "New Allocation", "value": "JTO ($18.4K)", "change": "NEW" }
+    ]
+  }, {
+    "title": "Top Counterparties",
+    "description": "Largest counterparties over the selected window.",
+    "table": [
+      { "label": "Jupiter DCA", "value": "$22.1K", "change": "+3.2K" },
+      { "label": "Orca Solana", "value": "$18.6K", "change": "+1.9K" }
+    ],
+    "footnote": "Counterparties measured by total transfer volume."
+  }],
+  "disclaimer": "Data sourced from Nansen x402 endpoints. Costs debited automatically from user wallet."
+}}}`
   }
 ];
 
@@ -115,6 +159,14 @@ ${componentDocs}
 4. Include title, URL, and description from search results
 5. Add quote if you're directly referencing specific information
 6. Be enthusiastic about citing sources - it builds trust and shows you did your research!
+
+**AlphaStreamCard:**
+- Use when summarizing Mallory Alpha Streams tool results
+- ALWAYS include at least two sections with descriptive titles
+- Each section can have narrative \`description\`, \`bullets\`, and/or \`table\` rows
+- Provide \`metadata\` chips for address, chain, timeframe, or focus tokens
+- Mention cost by setting \`estimatedCost\` so the user sees how much USDC was spent
+- Keep raw JSON tucked under \`raw\` when additional context is helpful
 
 **Example with Web Search Citation:**
 \`\`\`markdown

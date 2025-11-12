@@ -10,6 +10,11 @@ export const toolDisplayNames: Record<string, string> = {
   // Supermemory tools
   searchMemories: 'Supermemory',
   addMemory: 'Supermemory',
+
+  // Alpha Streams
+  alphaWalletDeepDive: 'Alpha Wallet Deep Dive',
+  alphaSmartMoneyRadar: 'Alpha Smart Money Radar',
+  alphaTokenPulse: 'Alpha Token Pulse',
 };
 
 /**
