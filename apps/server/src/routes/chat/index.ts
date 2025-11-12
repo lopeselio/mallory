@@ -220,6 +220,9 @@ router.post('/', authenticateUser, async (req: AuthenticatedRequest, res) => {
       nansenTokenJupiterDcas: toolRegistry.createNansenTokenJupiterDcasTool(x402Context),
       nansenPnlLeaderboard: toolRegistry.createNansenPnlLeaderboardTool(x402Context),
       nansenPortfolio: toolRegistry.createNansenPortfolioTool(x402Context),
+      alphaWalletDeepDive: toolRegistry.createAlphaWalletDeepDiveTool({ x402Context, userId }),
+      alphaSmartMoneyRadar: toolRegistry.createAlphaSmartMoneyRadarTool({ x402Context, userId }),
+      alphaTokenPulse: toolRegistry.createAlphaTokenPulseTool({ x402Context, userId }),
       // Memory now handled by infinite-memory package (automatic)
     };
 
@@ -422,7 +425,16 @@ You have access to **19 Nansen API endpoints** via x402! These are the same endp
 - **nansenFlows**: Detailed flow analysis for addresses
 - **nansenPnl**: Profit & loss analysis for addresses
 - **nansenPnlSummary**: Summary of PnL performance
-- **nansenPnlLeaderboard**: Top performing wallets by PnL`);
+- **nansenPnlLeaderboard**: Top performing wallets by PnL
+
+### Mallory Alpha Streams (~0.002 USDC bundles)
+
+These curated tools combine multiple Nansen endpoints into a single premium insight. Use them when users want fast, polished analysis:
+- **alphaWalletDeepDive**: Run historical balance trends + top counterparties for a wallet. Always render results with \`AlphaStreamCard\` (variant "wallet") and include metadata (address, chain, timeframe).
+- **alphaSmartMoneyRadar**: Surface smart money netflows and holdings rotations across chains. Render with \`AlphaStreamCard\` (variant "smartMoney") highlighting inflows/outflows and positioning shifts.
+- **alphaTokenPulse**: Blend token screener metrics with wallet flow intelligence. Render with \`AlphaStreamCard\` (variant "token") and call out momentum/liquidity signals.
+
+Each Alpha Stream costs roughly 0.002 USDC (two Nansen calls). Announce the spend in your summary (e.g., "Cost: ~0.002 USDC via x402").`);
 
   // 4. x402 payment handling
   sections.push(`
