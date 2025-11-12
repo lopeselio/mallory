@@ -12,6 +12,8 @@ import { MessageList } from '../../components/chat/MessageList';
 import { useChatState } from '../../hooks/useChatState';
 import { useActiveConversation } from '../../hooks/useActiveConversation';
 import { OnboardingConversationHandler } from '../../components/chat/OnboardingConversationHandler';
+import { AlphaBalanceBadge } from '../../components/chat/AlphaBalanceBadge';
+import { AlphaToastProvider } from '../../components/ui/AlphaToastProvider';
 
 export default function ChatScreen() {
   const router = useRouter();
@@ -76,16 +78,17 @@ export default function ChatScreen() {
   }
 
   return (
-    <View 
-      style={[
-        styles.outerContainer,
-        // On web, use static 100dvh (doesn't change with keyboard)
-        Platform.OS === 'web' && {
-          height: '100dvh' as any,
-          maxHeight: '100dvh' as any,
-        }
-      ]}
-    >
+    <AlphaToastProvider>
+      <View 
+        style={[
+          styles.outerContainer,
+          // On web, use static 100dvh (doesn't change with keyboard)
+          Platform.OS === 'web' && {
+            height: '100dvh' as any,
+            maxHeight: '100dvh' as any,
+          }
+        ]}
+      >
       <SafeAreaView style={styles.wideContainer} edges={['top', 'bottom']}>
         {/* Onboarding Conversation Handler - manages onboarding in background */}
         <OnboardingConversationHandler
@@ -95,6 +98,10 @@ export default function ChatScreen() {
 
         {/* Header with navigation */}
         <ChatHeader user={user} styles={styles} />
+
+        <View style={styles.balanceContainer}>
+          <AlphaBalanceBadge />
+        </View>
 
         {/* Main chat content - uses wide container for more space */}
         <KeyboardAvoidingView 
@@ -153,7 +160,8 @@ export default function ChatScreen() {
           )}
         </KeyboardAvoidingView>
       </SafeAreaView>
-    </View>
+      </View>
+    </AlphaToastProvider>
   );
 }
 
@@ -180,6 +188,9 @@ const styles = StyleSheet.create({
     maxWidth: 960,
     width: '100%',
     alignSelf: 'center',
+  },
+  balanceContainer: {
+    alignItems: 'flex-end',
   },
   header: {
     flexDirection: 'row',

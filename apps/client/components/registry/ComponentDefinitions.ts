@@ -3,6 +3,7 @@ import { ComponentDefinition } from './ComponentRegistry';
 // Import dynamic components (LLM-controlled only)
 // Only components from the ui/ directory should be in the registry
 import { InlineCitationWrapper } from '../ui/InlineCitationWrapper';
+import { AlphaStreamCard } from '../ui/AlphaStreamCard';
 
 /**
  * Dynamic component definitions
@@ -92,6 +93,90 @@ export const dynamicComponents: ComponentDefinition[] = [
             url: 'https://example.com/enterprise-ai-survey'
           }
         ]
+      }
+    ]
+  },
+  {
+    name: 'AlphaStreamCard',
+    component: AlphaStreamCard,
+    category: 'dynamic',
+    description: 'Rich visualization card for Mallory Alpha Streams results. Displays premium analytics with sections, bullet points, tables, and raw data.',
+    propsSchema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string', description: 'Headline for the alpha insight' },
+        subtitle: { type: 'string', description: 'Optional supporting subtitle' },
+        variant: { type: 'string', description: 'Visual styling variant: wallet, smartMoney, token, or general' },
+        estimatedCost: { type: 'number', description: 'Approximate x402 spend in USDC' },
+        metadata: { type: 'object', description: 'Key/value chips displayed under the header' },
+        sections: {
+          type: 'array',
+          description: 'Insight sections to render in stacked layout',
+          items: {
+            type: 'object',
+            properties: {
+              title: { type: 'string', description: 'Section heading' },
+              description: { type: 'string', description: 'Supporting narrative copy' },
+              bullets: {
+                type: 'array',
+                items: { type: 'string' },
+                description: 'Key bullet points'
+              },
+              table: {
+                type: 'array',
+                description: 'Structured rows with label/value pairs',
+                items: {
+                  type: 'object',
+                  properties: {
+                    label: { type: 'string', description: 'Row label' },
+                    value: { type: 'string', description: 'Primary metric value' },
+                    change: { type: 'string', description: 'Optional change indicator' }
+                  },
+                  required: ['label', 'value']
+                }
+              },
+              raw: { type: 'object', description: 'Optional raw JSON payload (will be stringified)' },
+              footnote: { type: 'string', description: 'Small-print annotation' }
+            },
+            required: ['title']
+          }
+        },
+        disclaimer: { type: 'string', description: 'Footer disclaimer text' }
+      },
+      required: ['title', 'sections']
+    },
+    examples: [
+      {
+        title: 'Smart Money Rotation Watch',
+        variant: 'smartMoney',
+        estimatedCost: 0.002,
+        metadata: {
+          window: '7d',
+          focus: 'Solana & Ethereum'
+        },
+        sections: [
+          {
+            title: 'Netflow Highlights',
+            bullets: [
+              'SOL saw +$4.2M smart money net inflow over the last 24h',
+              'JTO rotation accelerated with +$1.1M net buys from top wallets'
+            ],
+            table: [
+              { label: 'Top Inflow Token', value: 'SOL', change: '+$4.2M' },
+              { label: 'Top Outflow Token', value: 'USDC', change: '-$3.6M' }
+            ]
+          },
+          {
+            title: 'Holdings Shifts',
+            description: 'Largest week-over-week portfolio changes across tracked addresses.',
+            table: [
+              { label: 'mSOL', value: '+32%', change: '+$2.9M' },
+              { label: 'JTO', value: '+19%', change: '+$1.1M' }
+            ],
+            footnote: 'Holdings based on 180 top-performing addresses.'
+          }
+        ],
+        disclaimer: 'Data sourced from Nansen x402 endpoints. Values rounded to nearest $100K.'
       }
     ]
   }

@@ -13,6 +13,7 @@ import { ChainOfThought, ChainOfThoughtSearchResults, PulsingStar } from './Chai
 import { AssistantResponse } from './AssistantResponse';
 import { MessageActions } from './Actions';
 import type { DeviceInfo } from '@/lib/device';
+import { getToolDisplayName } from '@/lib/toolDisplayNames';
 
 interface SimpleMessageRendererProps {
   message: any; // AI SDK UIMessage
@@ -314,13 +315,14 @@ function renderChainOfThoughtBlock(
       // Handle other tools generically
       hasToolCalls = true; // Mark that we have tool calls
       const toolName = extractToolName(part);
+      const displayName = getToolDisplayName(toolName);
       const isToolCall = part.type?.includes('call');
       
       steps.push({
         id: `tool-${blockIndex}-${partIndex}`,
         type: isToolCall ? 'tool_call' : 'tool_response',
-        label: isToolCall ? `Calling ${toolName}` : `${toolName} Results`,
-        description: isToolCall ? `Using ${toolName} tool` : `Received ${toolName} response`,
+        label: isToolCall ? `Calling ${displayName}` : `${displayName} Results`,
+        description: isToolCall ? `Using ${displayName} tool` : `Received ${displayName} response`,
         status: 'complete',
         timestamp: new Date().toISOString(),
         data: { toolName },

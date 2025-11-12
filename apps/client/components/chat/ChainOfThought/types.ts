@@ -70,6 +70,9 @@ export const STEP_ICONS = {
   error: 'close-circle' as const, // X circle for errors
   // Special tool-specific icons
   searchWeb: 'search' as const, // Search icon specifically for web search
+  alphaWalletDeepDive: 'analytics-outline' as const,
+  alphaSmartMoneyRadar: 'compass-outline' as const,
+  alphaTokenPulse: 'pulse-outline' as const,
 } as const;
 
 // Status colors for different states
