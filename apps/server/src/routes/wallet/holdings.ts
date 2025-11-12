@@ -72,9 +72,25 @@ async function fetchBirdeyeMarketData(tokenAddresses: string[]): Promise<Map<str
     if (data.success && data.data) {
       for (const [address, tokenData] of Object.entries(data.data)) {
         const marketData = tokenData as any;
+        const price =
+          Number(
+            marketData.price ??
+              marketData.priceUsd ??
+              marketData.price_usd ??
+              marketData.priceUSDC ??
+              marketData.price_usdc ??
+              marketData.value
+          ) || 0;
+        const marketCap =
+          Number(
+            marketData.market_cap ??
+              marketData.marketCap ??
+              marketData.marketCapUsd ??
+              marketData.market_cap_usd
+          ) || 0;
         resultMap.set(address, {
-          price: marketData.price || 0,
-          market_cap: marketData.market_cap || 0
+          price,
+          market_cap: marketCap
         });
       }
     }
